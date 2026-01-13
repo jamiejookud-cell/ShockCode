@@ -235,13 +235,13 @@ begin_initialization {
   double electron_sort_interval = 25;   // Injector moments are also updated at this internal
   double nppc  =  100;                  // Average number of macro particle per cell per species
 
-  double Lx  = 1024*de;      // size of box in x dimension
-  double Ly  = 0.25*de;      // size of box in y dimension
-  double Lz  = 4096*de;     // size of box in z dimension
+  double Lx  = 819.2*de;      // size of box in x dimension
+  double Ly  = 0.1*de;      // size of box in y dimension
+  double Lz  = 102.4*de;     // size of box in z dimension
 
-  double nx = 4*1024;
+  double nx = 8192;
   double ny = 1;
-  double nz = 4*4096;
+  double nz = 1024;
 
   //double Lx  = 200.0/sqrt(mi_me)*di;   // size of box in x dimension
   //double Ly  = ny * Lx / nx;           // size of box in y dimension
@@ -249,7 +249,7 @@ begin_initialization {
 
   double topology_x = 64;  // Number of domains in x, y, and z
   double topology_y = 1;
-  double topology_z = 256;
+  double topology_z = 8;
 
   /* double nx = 1024; */
   /* double ny = 1; */
@@ -289,10 +289,10 @@ begin_initialization {
   double dt = cfl_req*dg/c;                      // courant limited time step
   if( wpe*dt>wpedt_max) dt=wpedt_max/wpe;        // override timestep if plasma frequency limited
 
-  int restart_interval = int(10000.0/(wci*dt));
+  int restart_interval = 500;      // checkpoint restart
   int energies_interval = 200;
   /* int energies_interval = 1;                     // for testing */
-  int interval = int(1.0/(wci*dt));
+  int interval = int(0.01/(wci*dt));
   /* int interval = 50;                             // for testing */
   /* int tracer_interval = int(0.25/(wpe*dt)); */
   int tracer_interval = 10;                      // for testing
@@ -1594,6 +1594,8 @@ begin_diagnostics {
 
     //checkpt_subdir( restart_fbase[global->rtoggle], NUMFOLD );
     checkpt_subdir( "restore1", NUMFOLD );
+    const int nsp = global->nsp; 
+    DUMP_INJECTORS(1);
     //checkpt_subdir( restart_fbase[global->rtoggle], 0 );
 
     // particle tracking
@@ -1773,7 +1775,7 @@ begin_particle_injection {
 	else {
 
       if (rank() == 0) MESSAGE(("----------------Reading the Particle Injectors-----------------")); 
-      READ_INJECTOR(right, ny, nz, 0);
+      READ_INJECTOR(right, ny, nz, 1);
 	}
       } //end right boundary
 	       
@@ -1798,7 +1800,7 @@ begin_particle_injection {
 	  } // end for
 	} //endif
 	else { 
-	  READ_INJECTOR(left, ny, nz, 0); 
+	  READ_INJECTOR(left, ny, nz, 1); 
 	}
       } // end left boundary
 	    
@@ -1920,3 +1922,6 @@ begin_field_injection {
 
 begin_particle_collisions {
 } // end particle collisions
+
+
+
