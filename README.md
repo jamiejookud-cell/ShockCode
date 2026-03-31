@@ -1,2 +1,2 @@
 # ShockCode
-I am not original.
+I am not the original.
